@@ -3,6 +3,12 @@ use url::Url;
 
 fn create_uri(parsed_url: Url) -> String {
     return if parsed_url.scheme() != "sqlite" {
+        if parsed_url.password().is_none()
+            || parsed_url.host().is_none()
+            || parsed_url.username().is_empty()
+        {
+            panic!("uri is wrong")
+        }
         if parsed_url.port().is_none() {
             format!(
                 "{}://{}:{}@{}",

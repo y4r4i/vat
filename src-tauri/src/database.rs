@@ -11,7 +11,6 @@ pub async fn create_db(db_uri: String) -> Result<(), DbErr> {
     if parsed_uri.scheme() != "sqlite" {
         parsed_uri.set_path("");
     }
-    println!("{}", parsed_uri.as_str());
     let db = connection(parsed_uri.to_string()).await?;
     match db.get_database_backend() {
         DbBackend::MySql => {

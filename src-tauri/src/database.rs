@@ -2,34 +2,28 @@ use sea_orm::{ConnectionTrait, Database, DatabaseConnection, DbBackend, DbErr, S
 use url::Url;
 
 fn create_uri(parsed_url: Url) -> String {
-    return if parsed_url.scheme() != "sqlite" {
-        if parsed_url.password().is_none()
-            || parsed_url.host().is_none()
-            || parsed_url.username().is_empty()
-        {
-            panic!("uri is wrong")
-        }
-        if parsed_url.port().is_none() {
-            format!(
-                "{}://{}:{}@{}",
-                parsed_url.scheme(),
-                parsed_url.username(),
-                parsed_url.password().unwrap(),
-                parsed_url.host().unwrap()
-            )
-        } else {
-            format!(
-                "{}://{}:{}@{}:{}",
-                parsed_url.scheme(),
-                parsed_url.username(),
-                parsed_url.password().unwrap(),
-                parsed_url.host().unwrap(),
-                parsed_url.port().unwrap()
-            )
-        }
+    let auth = if !parsed_url.username().is_empty() && parsed_url.password().is_some() {
+        format!(
+            "{}:{}@",
+            parsed_url.username(),
+            parsed_url.password().unwrap()
+        )
     } else {
-        format!("{}:{}", parsed_url.scheme(), parsed_url.path())
+        ""
     };
+    let host = parsed_url.host().unwrap().to_string();
+    let port = parsed_url.port();
+    let mut uri = parsed_url.scheme();
+    uri += if uri == "sqlite" { ":" } else { "://" };
+    uri += auth;
+    uri += host;
+    if port.is_some() {
+        uri += port;
+    };
+    if parsed_url.query().is_some() {
+        uri += "?" + parsed_url.query().unwrap();
+    }
+    uri.to_string()
 }
 
 pub async fn connection(db_uri: String) -> Result<DatabaseConnection, DbErr> {

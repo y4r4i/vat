@@ -22,6 +22,7 @@ futures = "0.3.28"
 sea-orm = { version = "0.11.3", features = ["sqlx-mysql", "sqlx-postgres", "sqlx-sqlite", "runtime-async-std-native-tls", "macros"] }
 sea-orm-migration = "0.11.3"
 url = "2.4.0"
+uuid = { version = "1.4.0", features = ["v4", "fast-rng", "macro-diagnostics"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

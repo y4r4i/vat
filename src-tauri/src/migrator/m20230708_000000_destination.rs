@@ -24,7 +24,12 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Destination::Name).text().not_null())
-                    .col(ColumnDef::new(Destination::Uri).text().not_null())
+                    .col(
+                        ColumnDef::new(Destination::Uri)
+                            .text()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .to_owned(),
             )
             .await
